@@ -1,0 +1,117 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagBadge from '../../components/TagBadge.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { title, description, date, url, repo, tags, image } = project.data;
+const { Content } = await render(project);
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long'
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={image}
+  type="article"
+>
+  <article class="project container">
+    <header class="project__header">
+      <div class="project__meta">
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+      </div>
+
+      <h1 class="project__title">{title}</h1>
+
+      {tags && tags.length > 0 && (
+        <div class="project__tags">
+          {tags.map((tag) => (
+            <TagBadge tag={tag} linked={false} />
+          ))}
+        </div>
+      )}
+
+      {(url || repo) && (
+        <div class="project__links">
+          {url && (
+            <a href={url} class="button" target="_blank" rel="noopener">
+              View Live
+            </a>
+          )}
+          {repo && (
+            <a href={repo} class="button" target="_blank" rel="noopener">
+              View Repo
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <hr />
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <hr />
+
+    <footer class="project__footer">
+      <a href="/projects" class="button">
+        &larr; Back to all projects
+      </a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .project {
+    max-width: var(--max-width-content);
+  }
+
+  .project__header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .project__meta {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .project__title {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-lg);
+  }
+
+  .project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  .project__links {
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .project__footer {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: var(--space-xl);
+  }
+</style>
