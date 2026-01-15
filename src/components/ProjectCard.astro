@@ -17,9 +17,19 @@ const formattedDate = date.toLocaleDateString('en-US', {
 ---
 
 <article class:list={['project-card', variant === 'wide' && 'project-card--wide']}>
-  <a href={`/projects/${project.id}`} class="project-card__link">
+  <a
+    href={`/projects/${project.id}`}
+    class="project-card__link"
+    style={variant === 'wide' ? 'display: grid; grid-template-columns: 200px 1fr; gap: 1.5rem; align-items: center;' : ''}
+  >
     {image && (
-      <img src={image} alt={title} class="project-card__image" loading="lazy" />
+      <img
+        src={image}
+        alt={title}
+        class="project-card__image"
+        loading="lazy"
+        style={variant === 'wide' ? 'margin-bottom: 0;' : ''}
+      />
     )}
     <div class="project-card__content">
       <div class="project-card__meta">
@@ -156,14 +166,14 @@ const formattedDate = date.toLocaleDateString('en-US', {
 
   /* Wide variant - image left, content right using grid */
   .project-card--wide {
-    padding: var(--space-md);
+    padding: var(--space-sm);
   }
 
   .project-card--wide > .project-card__link {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: var(--space-lg);
-    align-items: start;
+    grid-template-columns: 200px 1fr;
+    gap: var(--space-md);
+    align-items: center;
   }
 
   .project-card--wide > .project-card__link > .project-card__image {
@@ -179,21 +189,22 @@ const formattedDate = date.toLocaleDateString('en-US', {
   }
 
   .project-card--wide .project-card__meta {
-    margin-bottom: var(--space-xs);
+    margin-bottom: 0;
   }
 
   .project-card--wide .project-card__title {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-xs);
+    font-size: var(--text-base);
+    margin-bottom: 0;
   }
 
   .project-card--wide .project-card__description {
     font-size: var(--text-sm);
+    margin-top: var(--space-xs);
   }
 
   .project-card--wide .project-card__footer {
-    margin-top: var(--space-sm);
-    padding-top: var(--space-sm);
+    margin-top: var(--space-xs);
+    padding-top: var(--space-xs);
   }
 
   @media (max-width: 640px) {
