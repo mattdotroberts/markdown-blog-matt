@@ -2,7 +2,7 @@
 title: "Speed Reader"
 description: "A browser-based speed reading app that helps you improve your reading skills and tracks your progress, all stored locally."
 date: 2026-01-15
-url: ""
+url: "https://speedreader-delta.vercel.app/"
 repo: ""
 tags: ["javascript", "productivity", "reading"]
 featured: true
