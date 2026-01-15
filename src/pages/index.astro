@@ -38,6 +38,9 @@ const featuredProjects = sortedProjects
 const displayPosts = featuredPosts.length > 0
   ? featuredPosts
   : sortedPosts.slice(0, 3);
+
+// Latest article (most recent post)
+const latestPost = sortedPosts[0];
 ---
 
 <BaseLayout
@@ -63,6 +66,19 @@ const displayPosts = featuredPosts.length > 0
       </p>
       <NewsletterSignup />
     </section>
+
+    <hr />
+
+    <!-- Latest Article -->
+    {latestPost && (
+      <section class="section latest-article">
+        <h2 class="latest-article__label">Latest Article</h2>
+        <a href={`/blog/${latestPost.id}`} class="latest-article__link">
+          <h3 class="latest-article__title">{latestPost.data.title}</h3>
+          <p class="latest-article__description">{latestPost.data.description}</p>
+        </a>
+      </section>
+    )}
 
     <hr />
 
@@ -178,5 +194,43 @@ const displayPosts = featuredPosts.length > 0
   .newsletter-section__description {
     color: var(--color-text-secondary);
     margin-bottom: var(--space-lg);
+  }
+
+  .latest-article {
+    text-align: center;
+  }
+
+  .latest-article__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .latest-article__link {
+    display: block;
+    color: inherit;
+  }
+
+  .latest-article__link:hover {
+    text-decoration: none;
+  }
+
+  .latest-article__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
+    transition: color var(--transition-fast);
+  }
+
+  .latest-article__link:hover .latest-article__title {
+    color: var(--color-accent-primary);
+  }
+
+  .latest-article__description {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    max-width: 60ch;
+    margin: 0 auto;
   }
 </style>
