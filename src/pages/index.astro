@@ -50,6 +50,7 @@ const latestPost = sortedPosts[0];
   <div class="container">
     <!-- Hero Section -->
     <section class="hero">
+      <img src="/favicon.png" alt="Matt" class="hero__avatar" />
       <h1 class="hero__title">Hello, I'm Matt</h1>
       <p class="hero__subtitle">
         I write about software development, technology, and the craft of building things.
@@ -127,6 +128,14 @@ const latestPost = sortedPosts[0];
   .hero {
     padding: var(--space-sm) 0;
     text-align: center;
+  }
+
+  .hero__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: var(--space-md);
   }
 
   .hero__title {
