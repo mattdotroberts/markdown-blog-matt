@@ -48,6 +48,8 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
           ))}
         </div>
       )}
+
+      <div id="speed-reader"></div>
     </header>
 
     {image && (
@@ -70,7 +72,11 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
   </article>
 </BaseLayout>
 
-<script src="https://speedreader-delta.vercel.app/dist/speed-reader-widget.js"></script>
+<script
+  src="https://speedreader-delta.vercel.app/dist/speed-reader-widget.js"
+  data-mode="inline"
+  data-container="#speed-reader">
+</script>
 
 <style>
   .article {
