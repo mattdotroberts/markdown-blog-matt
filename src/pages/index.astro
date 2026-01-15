@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import AboutSection from '../components/AboutSection.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { getCollection } from 'astro:content';
@@ -9,9 +10,18 @@ const allPosts = await getCollection('blog', ({ data }) => {
   return data.draft !== true;
 });
 
-// Sort by date, newest first
+const allProjects = await getCollection('projects', ({ data }) => {
+  return data.draft !== true;
+});
+
+// Sort posts by date, newest first
 const sortedPosts = allPosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Sort projects by date, newest first
+const sortedProjects = allProjects.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
 // Featured posts (first 3 or those marked as featured)
@@ -19,7 +29,12 @@ const featuredPosts = sortedPosts
   .filter(post => post.data.featured)
   .slice(0, 3);
 
-// If no featured, use most recent
+// Featured projects (those marked as featured)
+const featuredProjects = sortedProjects
+  .filter(project => project.data.featured)
+  .slice(0, 4);
+
+// If no featured posts, use most recent
 const displayPosts = featuredPosts.length > 0
   ? featuredPosts
   : sortedPosts.slice(0, 3);
@@ -40,6 +55,37 @@ const displayPosts = featuredPosts.length > 0
 
     <hr />
 
+    <!-- Newsletter Section -->
+    <section class="section newsletter-section">
+      <h2 class="newsletter-section__title">Get new posts in your inbox</h2>
+      <p class="newsletter-section__description">
+        Subscribe to receive updates when I publish new articles.
+      </p>
+      <NewsletterSignup />
+    </section>
+
+    <hr />
+
+    <!-- Featured Projects -->
+    {featuredProjects.length > 0 && (
+      <>
+        <section class="section">
+          <header class="section__header">
+            <h2 class="section__title">Featured Projects</h2>
+            <a href="/projects" class="section__link">View all &rarr;</a>
+          </header>
+
+          <div class="projects-grid">
+            {featuredProjects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </section>
+
+        <hr />
+      </>
+    )}
+
     <!-- Featured Articles -->
     <section class="section">
       <header class="section__header">
@@ -52,17 +98,6 @@ const displayPosts = featuredPosts.length > 0
           <ArticleCard post={post} />
         ))}
       </div>
-    </section>
-
-    <hr />
-
-    <!-- Newsletter Section -->
-    <section class="section newsletter-section">
-      <h2 class="newsletter-section__title">Get new posts in your inbox</h2>
-      <p class="newsletter-section__description">
-        Subscribe to receive updates when I publish new articles.
-      </p>
-      <NewsletterSignup />
     </section>
 
     <hr />
@@ -114,6 +149,18 @@ const displayPosts = featuredPosts.length > 0
   .articles {
     display: flex;
     flex-direction: column;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .newsletter-section {
