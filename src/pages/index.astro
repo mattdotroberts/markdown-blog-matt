@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import AboutSection from '../components/AboutSection.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('blog', ({ data }) => {
@@ -55,6 +56,17 @@ const displayPosts = featuredPosts.length > 0
 
     <hr />
 
+    <!-- Newsletter Section -->
+    <section class="section newsletter-section">
+      <h2 class="newsletter-section__title">Get new posts in your inbox</h2>
+      <p class="newsletter-section__description">
+        Subscribe to receive updates when I publish new articles.
+      </p>
+      <NewsletterSignup />
+    </section>
+
+    <hr />
+
     <!-- About Section -->
     <AboutSection />
   </div>
@@ -102,5 +114,22 @@ const displayPosts = featuredPosts.length > 0
   .articles {
     display: flex;
     flex-direction: column;
+  }
+
+  .newsletter-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .newsletter-section__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .newsletter-section__description {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
   }
 </style>
