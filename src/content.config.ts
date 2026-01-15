@@ -1,21 +1,21 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const blogCollection = defineCollection({
+const blog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
+    tags: z.array(z.string()).optional(),
     image: z.string().optional(),
-    tags: z.array(z.string()).default([]),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(false),
+    featured: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(false),
   }),
 });
 
-const projectsCollection = defineCollection({
+const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
@@ -23,14 +23,12 @@ const projectsCollection = defineCollection({
     date: z.coerce.date(),
     url: z.string().optional(),
     repo: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     image: z.string().optional(),
-    tags: z.array(z.string()).default([]),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(false),
+    images: z.array(z.string()).optional(),
+    featured: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(false),
   }),
 });
 
-export const collections = {
-  blog: blogCollection,
-  projects: projectsCollection,
-};
+export const collections = { blog, projects };
