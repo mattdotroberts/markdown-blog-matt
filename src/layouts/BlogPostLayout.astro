@@ -50,6 +50,10 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
       )}
     </header>
 
+    {image && (
+      <img src={image} alt={title} class="article__image" />
+    )}
+
     <hr />
 
     <div class="prose">
@@ -99,6 +103,14 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
+  }
+
+  .article__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--space-xl);
+    border: 1px solid var(--color-border);
   }
 
   .article__footer {

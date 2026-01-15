@@ -5,6 +5,7 @@ date: 2026-01-15
 url: "https://speedreader-delta.vercel.app/"
 repo: ""
 tags: ["javascript", "productivity", "reading"]
+image: "/images/speed-reader.png"
 featured: true
 draft: false
 ---

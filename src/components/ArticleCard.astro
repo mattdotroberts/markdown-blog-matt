@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, tags } = post.data;
+const { title, description, pubDate, tags, image } = post.data;
 
 const formattedDate = pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -18,6 +18,9 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
 
 <article class="article-card">
   <a href={`/blog/${post.id}`} class="article-card__link">
+    {image && (
+      <img src={image} alt={title} class="article-card__image" loading="lazy" />
+    )}
     <div class="article-card__meta">
       <time datetime={pubDate.toISOString()}>{formattedDate}</time>
     </div>
@@ -53,6 +56,14 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
 
   .article-card__link:hover {
     text-decoration: none;
+  }
+
+  .article-card__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--color-border-subtle);
   }
 
   .article-card__meta {
