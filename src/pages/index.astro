@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import AboutSection from '../components/AboutSection.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+// Sort by date, newest first
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Featured posts (first 3 or those marked as featured)
+const featuredPosts = sortedPosts
+  .filter(post => post.data.featured)
+  .slice(0, 3);
+
+// If no featured, use most recent
+const displayPosts = featuredPosts.length > 0
+  ? featuredPosts
+  : sortedPosts.slice(0, 3);
+---
+
+<BaseLayout
+  title="Home"
+  description="Personal blog about software development, technology, and thoughts on building things."
+>
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="hero__title">Hello, I'm Matt</h1>
+      <p class="hero__subtitle">
+        I write about software development, technology, and the craft of building things.
+      </p>
+    </section>
+
+    <hr />
+
+    <!-- Featured Articles -->
+    <section class="section">
+      <header class="section__header">
+        <h2 class="section__title">Featured Articles</h2>
+        <a href="/blog" class="section__link">View all &rarr;</a>
+      </header>
+
+      <div class="articles">
+        {displayPosts.map((post) => (
+          <ArticleCard post={post} />
+        ))}
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- About Section -->
+    <AboutSection />
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: var(--space-4xl) 0;
+    text-align: center;
+  }
+
+  .hero__title {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero__subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 50ch;
+    margin: 0 auto;
+  }
+
+  .section {
+    padding: var(--space-3xl) 0;
+  }
+
+  .section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+  }
+
+  .section__title {
+    font-size: var(--text-2xl);
+  }
+
+  .section__link {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .articles {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
