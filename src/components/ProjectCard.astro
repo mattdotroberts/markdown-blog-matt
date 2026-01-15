@@ -154,55 +154,60 @@ const formattedDate = date.toLocaleDateString('en-US', {
     text-decoration: none;
   }
 
-  /* Wide variant - image left, content right */
-  .project-card.project-card--wide {
+  /* Wide variant - image left, content right using grid */
+  .project-card--wide {
     padding: var(--space-md);
   }
 
-  .project-card.project-card--wide .project-card__link {
-    display: flex !important;
-    flex-direction: row;
+  .project-card--wide > .project-card__link {
+    display: grid;
+    grid-template-columns: 280px 1fr;
     gap: var(--space-lg);
-    align-items: flex-start;
+    align-items: start;
   }
 
-  .project-card.project-card--wide .project-card__image {
-    width: 240px;
-    flex-shrink: 0;
+  .project-card--wide > .project-card__link > .project-card__image {
+    width: 100%;
     margin-bottom: 0;
+    grid-row: 1;
+    grid-column: 1;
   }
 
-  .project-card.project-card--wide .project-card__content {
-    flex: 1;
-    min-width: 0;
+  .project-card--wide > .project-card__link > .project-card__content {
+    grid-row: 1;
+    grid-column: 2;
   }
 
-  .project-card.project-card--wide .project-card__meta {
+  .project-card--wide .project-card__meta {
     margin-bottom: var(--space-xs);
   }
 
-  .project-card.project-card--wide .project-card__title {
+  .project-card--wide .project-card__title {
     font-size: var(--text-lg);
     margin-bottom: var(--space-xs);
   }
 
-  .project-card.project-card--wide .project-card__description {
-    margin-bottom: 0;
+  .project-card--wide .project-card__description {
     font-size: var(--text-sm);
   }
 
-  .project-card.project-card--wide .project-card__footer {
+  .project-card--wide .project-card__footer {
     margin-top: var(--space-sm);
     padding-top: var(--space-sm);
   }
 
   @media (max-width: 640px) {
-    .project-card.project-card--wide .project-card__link {
-      flex-direction: column;
+    .project-card--wide > .project-card__link {
+      grid-template-columns: 1fr;
     }
 
-    .project-card.project-card--wide .project-card__image {
-      width: 100%;
+    .project-card--wide > .project-card__link > .project-card__image {
+      grid-column: 1;
+    }
+
+    .project-card--wide > .project-card__link > .project-card__content {
+      grid-row: 2;
+      grid-column: 1;
     }
   }
 </style>
