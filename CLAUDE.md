@@ -1,5 +1,8 @@
 # Project Guide
 
+## Workflow
+- **Always commit and push changes** unless told otherwise
+
 ## Overview
 Personal blog built with Astro, using a Greptile-inspired dark-mode-first design.
 
