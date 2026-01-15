@@ -1,0 +1,50 @@
+---
+interface Props {
+  images: string[];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+---
+
+<section class="gallery">
+  <h2 class="gallery__title">Screenshots</h2>
+  <div class="gallery__grid">
+    {images.map((src, i) => (
+      <img src={src} alt={`${title} screenshot ${i + 1}`} class="gallery__image" />
+    ))}
+  </div>
+</section>
+
+<style>
+  .gallery {
+    margin: var(--space-xl) 0;
+  }
+
+  .gallery__title {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  .gallery__image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 640px) {
+    .gallery__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
