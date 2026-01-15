@@ -125,7 +125,7 @@ const latestPost = sortedPosts[0];
 
 <style>
   .hero {
-    padding: var(--space-lg) 0;
+    padding: var(--space-sm) 0;
     text-align: center;
   }
 
@@ -142,7 +142,7 @@ const latestPost = sortedPosts[0];
   }
 
   .section {
-    padding: var(--space-md) 0;
+    padding: var(--space-sm) 0;
   }
 
   .section__header {
@@ -193,11 +193,14 @@ const latestPost = sortedPosts[0];
 
   .newsletter-section__description {
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-sm);
   }
 
   .latest-article {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .latest-article__label {
