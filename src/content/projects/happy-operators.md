@@ -6,6 +6,10 @@ url: "https://happyoperators.com"
 repo: ""
 tags: ["n8n", "automation", "ai", "education"]
 image: "/images/happy-operators.png"
+images:
+  - "/images/happy-operators-2.jpg"
+  - "/images/happy-operators-3.jpg"
+  - "/images/happy-operators-4.jpg"
 featured: true
 draft: false
 ---
