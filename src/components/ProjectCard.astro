@@ -4,9 +4,10 @@ import TagBadge from './TagBadge.astro';
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  variant?: 'default' | 'wide';
 }
 
-const { project } = Astro.props;
+const { project, variant = 'default' } = Astro.props;
 const { title, description, date, url, repo, tags, image } = project.data;
 
 const formattedDate = date.toLocaleDateString('en-US', {
@@ -15,44 +16,46 @@ const formattedDate = date.toLocaleDateString('en-US', {
 });
 ---
 
-<article class="project-card">
+<article class:list={['project-card', variant === 'wide' && 'project-card--wide']}>
   <a href={`/projects/${project.id}`} class="project-card__link">
     {image && (
       <img src={image} alt={title} class="project-card__image" loading="lazy" />
     )}
-    <div class="project-card__meta">
-      <time datetime={date.toISOString()}>{formattedDate}</time>
+    <div class="project-card__content">
+      <div class="project-card__meta">
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+      </div>
+
+      <h3 class="project-card__title">{title}</h3>
+
+      <p class="project-card__description">{description}</p>
+
+      <div class="project-card__footer">
+        {tags && tags.length > 0 && (
+          <div class="project-card__tags">
+            {tags.map((tag) => (
+              <TagBadge tag={tag} linked={false} />
+            ))}
+          </div>
+        )}
+
+        {(url || repo) && (
+          <div class="project-card__links">
+            {url && (
+              <a href={url} class="project-card__ext-link" target="_blank" rel="noopener">
+                Live
+              </a>
+            )}
+            {repo && (
+              <a href={repo} class="project-card__ext-link" target="_blank" rel="noopener">
+                Repo
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </div>
-
-    <h3 class="project-card__title">{title}</h3>
-
-    <p class="project-card__description">{description}</p>
   </a>
-
-  <div class="project-card__footer">
-    {tags && tags.length > 0 && (
-      <div class="project-card__tags">
-        {tags.map((tag) => (
-          <TagBadge tag={tag} linked={false} />
-        ))}
-      </div>
-    )}
-
-    {(url || repo) && (
-      <div class="project-card__links">
-        {url && (
-          <a href={url} class="project-card__ext-link" target="_blank" rel="noopener">
-            Live
-          </a>
-        )}
-        {repo && (
-          <a href={repo} class="project-card__ext-link" target="_blank" rel="noopener">
-            Repo
-          </a>
-        )}
-      </div>
-    )}
-  </div>
 </article>
 
 <style>
@@ -85,6 +88,11 @@ const formattedDate = date.toLocaleDateString('en-US', {
     border-radius: var(--border-radius-sm);
     margin-bottom: var(--space-md);
     border: 1px solid var(--color-border-subtle);
+  }
+
+  .project-card__content {
+    display: flex;
+    flex-direction: column;
   }
 
   .project-card__meta {
@@ -144,5 +152,38 @@ const formattedDate = date.toLocaleDateString('en-US', {
   .project-card__ext-link:hover {
     color: var(--color-accent-primary);
     text-decoration: none;
+  }
+
+  /* Wide variant - image left, content right */
+  .project-card--wide .project-card__link {
+    display: flex;
+    gap: var(--space-xl);
+    align-items: flex-start;
+  }
+
+  .project-card--wide .project-card__image {
+    flex: 0 0 50%;
+    max-width: 50%;
+    margin-bottom: 0;
+  }
+
+  .project-card--wide .project-card__content {
+    flex: 1;
+  }
+
+  .project-card--wide .project-card__title {
+    font-size: var(--text-2xl);
+  }
+
+  @media (max-width: 768px) {
+    .project-card--wide .project-card__link {
+      flex-direction: column;
+    }
+
+    .project-card--wide .project-card__image {
+      flex: none;
+      max-width: 100%;
+      margin-bottom: var(--space-md);
+    }
   }
 </style>

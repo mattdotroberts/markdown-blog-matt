@@ -92,9 +92,9 @@ const latestPost = sortedPosts[0];
             <a href="/projects" class="section__link">View all &rarr;</a>
           </header>
 
-          <div class="projects-grid">
+          <div class:list={['projects-container', featuredProjects.length === 1 && 'projects-container--single']}>
             {featuredProjects.map((project) => (
-              <ProjectCard project={project} />
+              <ProjectCard project={project} variant={featuredProjects.length === 1 ? 'wide' : 'default'} />
             ))}
           </div>
         </section>
@@ -176,14 +176,18 @@ const latestPost = sortedPosts[0];
     flex-direction: column;
   }
 
-  .projects-grid {
+  .projects-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
   }
 
+  .projects-container--single {
+    grid-template-columns: 1fr;
+  }
+
   @media (max-width: 640px) {
-    .projects-grid {
+    .projects-container {
       grid-template-columns: 1fr;
     }
   }
