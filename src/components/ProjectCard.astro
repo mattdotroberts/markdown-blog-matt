@@ -155,35 +155,53 @@ const formattedDate = date.toLocaleDateString('en-US', {
   }
 
   /* Wide variant - image left, content right */
+  .project-card--wide {
+    padding: var(--space-md);
+  }
+
   .project-card--wide .project-card__link {
     display: flex;
-    gap: var(--space-xl);
-    align-items: flex-start;
+    flex-direction: row;
+    gap: var(--space-lg);
+    align-items: center;
   }
 
   .project-card--wide .project-card__image {
-    flex: 0 0 50%;
-    max-width: 50%;
+    width: 280px;
+    flex-shrink: 0;
     margin-bottom: 0;
   }
 
   .project-card--wide .project-card__content {
     flex: 1;
+    min-width: 0;
+  }
+
+  .project-card--wide .project-card__meta {
+    margin-bottom: var(--space-xs);
   }
 
   .project-card--wide .project-card__title {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
   }
 
-  @media (max-width: 768px) {
+  .project-card--wide .project-card__description {
+    margin-bottom: 0;
+  }
+
+  .project-card--wide .project-card__footer {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+  }
+
+  @media (max-width: 640px) {
     .project-card--wide .project-card__link {
       flex-direction: column;
     }
 
     .project-card--wide .project-card__image {
-      flex: none;
-      max-width: 100%;
-      margin-bottom: var(--space-md);
+      width: 100%;
     }
   }
 </style>
