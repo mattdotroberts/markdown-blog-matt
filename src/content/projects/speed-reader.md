@@ -6,7 +6,7 @@ url: "https://speedreader-delta.vercel.app/"
 repo: ""
 tags: ["javascript", "productivity", "reading"]
 image: "/images/speed-reader.png"
-featured: true
+featured: false
 draft: false
 ---
 

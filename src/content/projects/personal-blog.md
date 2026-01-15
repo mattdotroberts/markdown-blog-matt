@@ -6,7 +6,7 @@ url: "https://matt-blog.vercel.app"
 repo: "https://github.com/mattdotroberts/markdown-blog-matt"
 tags: ["astro", "css", "typescript"]
 image: "/images/personal-blog.png"
-featured: true
+featured: false
 draft: false
 ---
 

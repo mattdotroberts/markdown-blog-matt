@@ -10,7 +10,7 @@ images:
   - "/images/on-this-day-2.png"
   - "/images/on-this-day-3.png"
   - "/images/on-this-day-4.png"
-featured: true
+featured: false
 draft: false
 ---
 
