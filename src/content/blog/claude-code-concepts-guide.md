@@ -13,192 +13,241 @@ So I made one.
 
 ---
 
-## Extension Mechanisms
+## MCP (Model Context Protocol) Servers
 
-### MCP (Model Context Protocol) Servers
+External processes that give Claude new capabilities.
 
-External processes that provide tools, resources, and prompts to Claude.
+- **Runs as:** A separate server process Claude connects to
+- **Protocol:** Communicates via stdio or HTTP
+- **Language:** Can be written in Python, TypeScript, Go—anything
+- **Persistence:** Configured once, available across all sessions
 
-| Aspect | Description |
-|--------|-------------|
-| **What it is** | Separate server process Claude connects to |
-| **Protocol** | Communicates via stdio or HTTP |
-| **Language** | Can be written in any language (Python, TypeScript, Go, etc.) |
-| **Persistence** | Configured in settings, persists across sessions |
-| **Use cases** | Database access, API integrations, custom tooling |
+**Use cases:** Database access, API integrations, custom tooling.
 
-**Example:** An MCP server that provides tools to query your PostgreSQL database or interact with external APIs.
+For example, you might have an MCP server that lets Claude query your PostgreSQL database:
 
-**Configuration:** `~/.claude/settings.json` or project-level `.claude/settings.json`
+```json
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"]
+    }
+  }
+}
+```
 
----
-
-### Skills
-
-Prompt-based workflows that define how Claude should handle specific tasks.
-
-| Aspect | Description |
-|--------|-------------|
-| **What it is** | Specialized instructions/prompts for common tasks |
-| **Invocation** | Slash commands like `/commit`, `/review-pr` |
-| **Execution** | Runs within the main conversation context |
-| **Scope** | Can be built-in or custom-defined |
-
-**Example:** The `/commit` skill provides instructions for creating well-formatted git commits with proper messages.
+Configure these in `~/.claude/settings.json` (global) or `.claude/settings.json` (project).
 
 ---
 
-### Plugins
+## Skills
 
-Extensions that add features to the Claude Code CLI itself.
+Prompt-based workflows invoked with slash commands.
 
-| Aspect | Description |
-|--------|-------------|
-| **What it is** | Bundled extensions for core functionality |
-| **Status** | May not be active in all configurations |
+- **What they are:** Specialized instructions for common tasks
+- **Invocation:** `/commit`, `/review-pr`, etc.
+- **Execution:** Runs within your current conversation
 
----
+The `/commit` skill, for example, tells Claude exactly how to create well-formatted git commits—what to check, how to structure the message, when to include co-author attribution.
 
-### MCP vs Skills: The Key Difference
-
-| | MCP Servers | Skills |
-|---|-------------|--------|
-| **Purpose** | Add new capabilities | Standardize workflows |
-| **Runs as** | Separate process | Within conversation |
-| **Invoked via** | Tool calls (automatic) | Slash commands (manual) |
-| **Provides** | New tools/resources | Guided instructions |
-
-MCP servers give Claude new abilities. Skills tell Claude how to use its abilities for specific tasks.
+Skills standardize *how* Claude does things. MCP servers expand *what* Claude can do.
 
 ---
 
-## Agents vs Tools
+## MCP vs Skills
 
-This distinction tripped me up at first. Both execute actions, but they work very differently.
+This was my first point of confusion. Here's the distinction:
+
+**MCP Servers:**
+- Add new tools and capabilities
+- Run as separate processes
+- Invoked automatically when Claude needs them
+
+**Skills:**
+- Provide guided workflows for existing capabilities
+- Run within the conversation
+- Invoked manually with `/command`
+
+Think of it this way: an MCP server might give Claude the ability to query Jira. A skill would define the workflow for how Claude should triage and update tickets.
+
+---
+
+## Tools vs Agents
+
+Both execute actions, but they work very differently.
 
 ### Tools
 
-Direct actions executed in the current session.
+Direct primitives Claude uses in the current session:
 
-- `Bash`, `Read`, `Write`, `Edit`, `Grep`, `Glob`, etc.
-- Run synchronously
-- Return raw output
-- General-purpose primitives
+```
+Bash    - Run shell commands
+Read    - Read file contents
+Write   - Create files
+Edit    - Modify existing files
+Grep    - Search file contents
+Glob    - Find files by pattern
+```
 
-### Agents (via the Task Tool)
+Tools are synchronous, return raw output, and are general-purpose.
 
-Specialized subprocesses that handle complex tasks autonomously.
+### Agents
 
-- Spawn with their own context
-- Can run in background
-- Return summarized results
-- Domain-specific (e.g., `django-expert`, `react-component-architect`)
+Specialized subprocesses for complex tasks:
+
+```
+django-expert           - Django development
+react-component-architect - React patterns
+rails-backend-expert    - Ruby on Rails
+performance-optimizer   - Profiling and optimization
+```
+
+Agents spawn with their own context, can run in the background, and return summarized results. Claude delegates entire jobs to them.
 
 **When to use agents:**
 - Complex multi-step research
 - Domain-specific tasks matching an agent's expertise
-- Tasks requiring extensive exploration
-
-Think of tools as individual commands and agents as specialists you delegate entire jobs to.
+- Tasks requiring extensive codebase exploration
 
 ---
 
 ## Hooks vs Skills
 
-| | Hooks | Skills |
-|---|-------|--------|
-| **Trigger** | Automatic (on events) | Manual (`/command`) |
-| **Purpose** | Automation/validation | Guided workflows |
-| **Configuration** | Settings file | Built-in or custom |
-| **Examples** | Run linter on file save | `/commit` for commits |
+Another source of confusion. Both automate things, but differently.
 
-**Hooks** run shell commands automatically in response to events (tool calls, prompt submission, etc.).
+**Hooks** are reactive—they run automatically in response to events:
 
-**Skills** are invoked explicitly by the user with slash commands.
+```json
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "tool": "Write",
+        "command": "npm run lint --fix $CLAUDE_FILE_PATH"
+      }
+    ]
+  }
+}
+```
 
-The distinction: hooks are reactive automation, skills are proactive workflows.
+This runs the linter automatically after Claude writes a file.
+
+**Skills** are proactive—you invoke them explicitly with `/commit` or `/review-pr`.
+
+Hooks = automatic responses to events.
+Skills = manual workflows you trigger.
 
 ---
 
-## Plan Mode vs Regular Mode
+## Plan Mode
 
-### Regular Mode
+Sometimes you want Claude to think before acting.
+
+**Regular Mode:**
 - Full access to all tools
-- Can read, write, and edit files
-- Execute commands freely
+- Can read, write, edit files
+- Executes commands freely
 
-### Plan Mode
-- Research and design only
-- No file writes/edits allowed
-- Used for planning implementation before execution
-- Requires user approval to exit
+**Plan Mode:**
+- Research and exploration only
+- No file modifications allowed
+- Must get approval before exiting
 
-**Enter:** `EnterPlanMode` tool
-**Exit:** `ExitPlanMode` tool (requires user approval)
+Enter with `EnterPlanMode`, exit with `ExitPlanMode` (requires your approval).
 
-Plan mode is useful when you want Claude to think through a problem before touching any code.
+Useful when you want Claude to fully understand a problem before touching any code.
 
 ---
 
-## Configuration: CLAUDE.md vs Settings
+## Configuration Files
 
-| | CLAUDE.md | Settings |
-|---|-----------|----------|
-| **Location** | Project root | `~/.claude/settings.json` |
-| **Scope** | Project-specific | Global or project |
-| **Format** | Natural language markdown | JSON |
-| **Version control** | Yes (committed with repo) | Typically not |
-| **Purpose** | Project instructions/context | Tool configuration |
+Two places to configure Claude Code:
 
 ### CLAUDE.md
-Project-specific instructions read at session start. Contains coding standards, project context, and guidance for Claude. Write it like you're onboarding a new developer.
+
+Lives in your project root. Contains instructions in plain markdown:
+
+```markdown
+# CLAUDE.md
+
+## Build Commands
+- `npm run dev` - Start dev server
+- `npm run test` - Run tests
+
+## Code Style
+- Use TypeScript strict mode
+- Prefer functional components
+- Always add tests for new features
+```
+
+This is project-specific context. Write it like you're onboarding a new developer. It gets committed with your repo.
 
 ### Settings
-Configuration for MCP servers, hooks, permissions, and other Claude Code features. This is where you wire up external tools and automation.
+
+Lives at `~/.claude/settings.json`. Configures the machinery:
+
+```json
+{
+  "mcpServers": { ... },
+  "hooks": { ... },
+  "permissions": { ... }
+}
+```
+
+Settings are typically global and not version-controlled.
 
 ---
 
-## Background vs Foreground Tasks
+## Background Tasks
 
-### Foreground (Default)
-- Blocks until complete
-- Results shown immediately
-- Use for quick operations
+By default, tasks block until complete. For long-running operations:
 
-### Background
-- Set `run_in_background: true`
-- Continues while conversation proceeds
-- Check status with `TaskOutput` tool
-- Use for long-running operations
+```
+run_in_background: true
+```
+
+The task continues while your conversation proceeds. Check status with the `TaskOutput` tool.
 
 ---
 
-## Web Tools: WebFetch vs WebSearch
+## WebFetch vs WebSearch
 
-| | WebFetch | WebSearch |
-|---|----------|-----------|
-| **Input** | Specific URL | Search query |
-| **Output** | Page content (as markdown) | Search results with links |
-| **Use case** | Known resources/documentation | Discovery/research |
-| **Caching** | 15-minute cache | No cache |
+**WebFetch** — Get content from a specific URL:
+> "Fetch the docs at https://docs.example.com/api"
 
-**WebFetch:** "Get the content from this specific page"
-**WebSearch:** "Find pages about this topic"
+**WebSearch** — Find pages about a topic:
+> "Search for React 19 new features"
+
+WebFetch has a 15-minute cache. WebSearch doesn't cache.
 
 ---
 
 ## Quick Reference
 
-| Feature | Type | Invocation | Purpose |
-|---------|------|------------|---------|
-| MCP Server | External process | Automatic (tools) | Add capabilities |
-| Skill | Prompt workflow | `/command` | Standardize tasks |
-| Hook | Shell automation | Automatic (events) | Validate/automate |
-| Agent | Subprocess | `Task` tool | Complex tasks |
-| Tool | Direct action | Tool call | Primitives |
-| Plan Mode | Session mode | `EnterPlanMode` | Design before build |
-| CLAUDE.md | Project config | Auto-loaded | Project context |
-| Settings | JSON config | N/A | Global config |
+**Adding capabilities:**
+- MCP Server → new tools from external processes
+
+**Standardizing workflows:**
+- Skill → guided process via `/command`
+
+**Automating responses:**
+- Hook → shell command on events
+
+**Delegating complex work:**
+- Agent → specialized subprocess via Task tool
+
+**Direct actions:**
+- Tool → primitives like Read, Write, Bash
+
+**Planning before doing:**
+- Plan Mode → research-only, no edits
+
+**Project context:**
+- CLAUDE.md → instructions in your repo
+
+**Global config:**
+- Settings → JSON at `~/.claude/settings.json`
 
 ---
 
@@ -207,7 +256,7 @@ Configuration for MCP servers, hooks, permissions, and other Claude Code feature
 After sorting through all this, here's how I think about it:
 
 - **Tools** are Claude's hands—direct actions like reading files or running commands
-- **Agents** are specialists Claude can delegate to
+- **Agents** are specialists Claude delegates entire jobs to
 - **MCP servers** extend what Claude can do
 - **Skills** standardize how Claude does common tasks
 - **Hooks** automate responses to events
