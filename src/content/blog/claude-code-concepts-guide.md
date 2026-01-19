@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Concepts: The Guide I Wish I Had"
 description: "MCP servers, skills, hooks, agents, tools—Claude Code has a lot of terminology. Here's the reference I made after getting confused by all of it."
-pubDate: 2025-01-19
+pubDate: 2026-01-19
 tags: ["claude-code", "ai", "developer-tools"]
 featured: true
 draft: false
